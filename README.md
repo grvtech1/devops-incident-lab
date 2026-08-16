@@ -143,6 +143,8 @@ Every completed incident needs:
 
 Use [evidence/TEMPLATE.md](evidence/TEMPLATE.md). Generated evidence under `evidence/runs/` is ignored so you can remove secrets and select only safe artifacts before publishing.
 
+Published example: [Incident 01 - CrashLoop from invalid runtime configuration](evidence/examples/incident-01-crashloop-invalid-config.md).
+
 ## Production boundary
 
 This is an original portfolio lab, not a copy of BillFree and not evidence of historical company tenure. After you personally run the scenarios, you can accurately claim that you built and operated this lab. Company-production claims require separate company evidence and authorization.
