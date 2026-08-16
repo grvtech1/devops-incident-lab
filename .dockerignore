@@ -1,0 +1,12 @@
+.git
+.github
+cluster
+docs
+evidence
+incidents
+infra
+k8s
+monitoring
+scripts
+node_modules
+*.md

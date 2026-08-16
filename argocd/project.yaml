@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: incident-lab
+  namespace: argocd
+spec:
+  description: Dedicated project for the DevOps Incident Lab
+  sourceRepos:
+    - REPLACE_REPO_URL
+  destinations:
+    - namespace: incident-lab
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"

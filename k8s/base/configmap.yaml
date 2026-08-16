@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: incident-lab-config
+  namespace: incident-lab
+data:
+  APP_ENV: dev
+  SERVICE_NAME: incident-api
+  BACKEND_URL: http://dependency.incident-lab.svc.cluster.local:8080
+  FAILURE_RATE: "0"
+  STARTUP_DELAY_MS: "500"
+  SHUTDOWN_DELAY_MS: "3000"
+  CHAOS_ENABLED: "true"

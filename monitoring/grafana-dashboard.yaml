@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: incident-lab-dashboard
+  namespace: incident-lab
+  labels:
+    grafana_dashboard: "1"
+    app.kubernetes.io/part-of: devops-incident-lab
+data:
+  incident-lab.json: |-
+    {
+      "annotations": {"list": []},
+      "editable": true,
+      "panels": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "fieldConfig": {"defaults": {"unit": "reqps"}},
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+          "id": 1,
+          "targets": [{"expr": "sum(rate(incident_lab_http_requests_total[1m]))", "legendFormat": "requests"}],
+          "title": "Request rate",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "fieldConfig": {"defaults": {"unit": "percentunit", "min": 0, "max": 1}},
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+          "id": 2,
+          "targets": [{
+            "expr": "sum(rate(incident_lab_http_requests_total{status=~\"5..\"}[1m])) / clamp_min(sum(rate(incident_lab_http_requests_total[1m])), 0.001)",
+            "legendFormat": "5xx ratio"
+          }],
+          "title": "HTTP 5xx ratio",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "fieldConfig": {"defaults": {"unit": "bytes"}},
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+          "id": 3,
+          "targets": [{"expr": "process_resident_memory_bytes{service=\"incident-api\"}", "legendFormat": "{{pod}}"}],
+          "title": "Application resident memory",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "fieldConfig": {"defaults": {"unit": "short"}},
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+          "id": 4,
+          "targets": [{
+            "expr": "sum(increase(kube_pod_container_status_restarts_total{namespace=\"incident-lab\",container=\"api\"}[5m]))",
+            "legendFormat": "restarts"
+          }],
+          "title": "Container restarts (5m)",
+          "type": "timeseries"
+        }
+      ],
+      "refresh": "10s",
+      "schemaVersion": 41,
+      "tags": ["devops", "incident-lab"],
+      "templating": {"list": []},
+      "time": {"from": "now-30m", "to": "now"},
+      "title": "DevOps Incident Lab",
+      "uid": "devops-incident-lab",
+      "version": 1
+    }

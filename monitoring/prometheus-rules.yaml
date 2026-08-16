@@ -1,0 +1,58 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: incident-lab
+  namespace: incident-lab
+  labels:
+    app.kubernetes.io/part-of: devops-incident-lab
+spec:
+  groups:
+    - name: incident-lab.application
+      rules:
+        - alert: IncidentLabHighErrorRate
+          expr: |
+            sum(rate(incident_lab_http_requests_total{status=~"5.."}[1m]))
+            /
+            clamp_min(sum(rate(incident_lab_http_requests_total[1m])), 0.001)
+            > 0.20
+          for: 1m
+          labels:
+            severity: critical
+            service: incident-api
+          annotations:
+            summary: Incident Lab order API has a high HTTP error rate
+            description: More than 20% of observed requests returned HTTP 5xx for one minute.
+            runbook_url: docs/RUNBOOK-HIGH-ERROR-RATE.md
+        - alert: IncidentLabMetricsMissing
+          expr: absent(incident_lab_uptime_seconds{service="incident-api"})
+          for: 2m
+          labels:
+            severity: warning
+            service: incident-api
+          annotations:
+            summary: Incident Lab application metrics are missing
+            description: Prometheus has not observed the application uptime metric for two minutes.
+        - alert: IncidentLabContainerRestarting
+          expr: |
+            increase(kube_pod_container_status_restarts_total{
+              namespace="incident-lab",container="api"
+            }[5m]) > 2
+          for: 1m
+          labels:
+            severity: warning
+            service: incident-api
+          annotations:
+            summary: Incident Lab API container is restarting repeatedly
+            description: More than two restarts occurred in a five-minute window.
+        - alert: IncidentLabDeploymentUnavailable
+          expr: |
+            kube_deployment_status_replicas_unavailable{
+              namespace="incident-lab",deployment="incident-api"
+            } > 0
+          for: 2m
+          labels:
+            severity: critical
+            service: incident-api
+          annotations:
+            summary: Incident Lab deployment has unavailable replicas
+            description: The deployment has reported unavailable replicas for two minutes.

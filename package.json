@@ -1,0 +1,15 @@
+{
+  "name": "devops-incident-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A deliberately breakable Kubernetes workload for production incident practice.",
+  "scripts": {
+    "start": "node app/server.js",
+    "test": "node --test app/server.test.js",
+    "check": "node --check app/server.js && node --test app/server.test.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

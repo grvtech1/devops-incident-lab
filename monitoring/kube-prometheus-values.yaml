@@ -1,0 +1,28 @@
+defaultRules:
+  create: true
+
+prometheus:
+  prometheusSpec:
+    retention: 3d
+    serviceMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    resources:
+      requests:
+        cpu: 150m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+grafana:
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: ALL
+  persistence:
+    enabled: false
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    retention: 24h

@@ -1,0 +1,14 @@
+[control_plane]
+control ansible_host=REPLACE_CONTROL_PUBLIC_IP private_ip=REPLACE_CONTROL_PRIVATE_IP
+
+[workers]
+worker1 ansible_host=REPLACE_WORKER1_PUBLIC_IP private_ip=REPLACE_WORKER1_PRIVATE_IP
+worker2 ansible_host=REPLACE_WORKER2_PUBLIC_IP private_ip=REPLACE_WORKER2_PRIVATE_IP
+
+[k8s_cluster:children]
+control_plane
+workers
+
+[k8s_cluster:vars]
+ansible_user=ubuntu
+ansible_ssh_private_key_file=~/.ssh/incident-lab
