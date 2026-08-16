@@ -18,7 +18,7 @@ fi
 
 echo 'In-cluster Service DNS/ClusterIP check:'
 kubectl --namespace "$NAMESPACE" exec "$service_test_pod" -- \
-  wget -q -O - "$SERVICE_URL/health/ready"
+  wget -q -T 3 -t 1 -O - "$SERVICE_URL/health/ready"
 echo
 
 kubectl --namespace "$NAMESPACE" port-forward service/incident-api "$LOCAL_PORT:8080" >"$LOG_FILE" 2>&1 &
