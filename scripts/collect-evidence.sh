@@ -28,6 +28,15 @@ if kubectl --namespace monitoring get service monitoring-kube-prometheus-prometh
     >"$output_dir/monitoring-config.yaml" 2>&1
 fi
 
+if kubectl --namespace argocd get application incident-lab >/dev/null 2>&1; then
+  kubectl --namespace argocd get pods -o wide \
+    >"$output_dir/argocd-workloads.txt" 2>&1
+  kubectl --namespace argocd get application incident-lab -o yaml \
+    >"$output_dir/argocd-application.yaml" 2>&1
+  kubectl --namespace argocd logs statefulset/argocd-application-controller \
+    --since=10m >"$output_dir/argocd-controller.log" 2>&1 || true
+fi
+
 cp "$ROOT_DIR/evidence/TEMPLATE.md" "$output_dir/incident-report.md"
 
 printf 'Evidence captured in %s\n' "$output_dir"
