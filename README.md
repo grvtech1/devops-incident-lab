@@ -103,7 +103,7 @@ kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-prometheus 909
 kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-alertmanager 9093:9093
 ```
 
-The chart version is pinned in the installer. Upgrade it deliberately after reading upstream notes and validating the rendered manifests.
+The chart version is pinned in the installer. Upgrade it deliberately after reading upstream notes and validating the rendered manifests. The installer waits up to 20 minutes for first-time image pulls; set `OBSERVABILITY_HELM_TIMEOUT` to override that limit when needed.
 
 The workflow examples use versioned action releases for readability. Before reusing them with valuable organization secrets, pin every action to a reviewed full commit SHA and automate controlled updates.
 
