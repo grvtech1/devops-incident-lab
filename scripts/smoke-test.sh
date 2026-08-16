@@ -4,6 +4,22 @@ set -Eeuo pipefail
 NAMESPACE="${NAMESPACE:-incident-lab}"
 LOCAL_PORT="${LOCAL_PORT:-18080}"
 LOG_FILE="${TMPDIR:-/tmp}/incident-lab-port-forward.log"
+SERVICE_URL="http://incident-api:8080"
+
+service_test_pod="$(kubectl --namespace "$NAMESPACE" get pods \
+  -l app.kubernetes.io/name=incident-api \
+  -o jsonpath='{range .items[?(@.status.containerStatuses[0].ready==true)]}{.metadata.name}{"\n"}{end}' \
+  | head -n 1)"
+
+if [[ -z "$service_test_pod" ]]; then
+  echo 'No Ready incident-api pod is available for the in-cluster Service check.' >&2
+  exit 1
+fi
+
+echo 'In-cluster Service DNS/ClusterIP check:'
+kubectl --namespace "$NAMESPACE" exec "$service_test_pod" -- \
+  wget -q -O - "$SERVICE_URL/health/ready"
+echo
 
 kubectl --namespace "$NAMESPACE" port-forward service/incident-api "$LOCAL_PORT:8080" >"$LOG_FILE" 2>&1 &
 port_forward_pid=$!

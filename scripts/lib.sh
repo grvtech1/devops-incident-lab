@@ -25,7 +25,10 @@ show_workload_state() {
   echo '--- pods ---'
   kubectl --namespace "$NAMESPACE" get pods -l app.kubernetes.io/name=incident-api -o wide
   echo '--- service endpoints ---'
-  kubectl --namespace "$NAMESPACE" get endpointslice -l kubernetes.io/service-name=incident-api
+  printf 'ADDRESS\tREADY\tSERVING\tTERMINATING\tNODE\n'
+  kubectl --namespace "$NAMESPACE" get endpointslice \
+    -l kubernetes.io/service-name=incident-api \
+    -o jsonpath='{range .items[*].endpoints[*]}{.addresses[0]}{"\t"}{.conditions.ready}{"\t"}{.conditions.serving}{"\t"}{.conditions.terminating}{"\t"}{.nodeName}{"\n"}{end}'
   echo '--- recent events ---'
   kubectl --namespace "$NAMESPACE" get events --sort-by=.metadata.creationTimestamp | tail -n 15
 }

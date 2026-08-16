@@ -58,7 +58,7 @@ make smoke
 ./scripts/lab.sh list
 ```
 
-The bootstrap operation creates `kind-incident-lab`, builds `devops-incident-lab:local`, loads it into the kind nodes, deploys two replicas, waits for rollout, and executes a business smoke test.
+The bootstrap operation creates `kind-incident-lab`, builds `devops-incident-lab:local`, loads it into the kind nodes, deploys two replicas, and waits for rollout. The smoke test checks the Service DNS/ClusterIP path from inside the cluster, then validates readiness, order creation, and metrics through a temporary local port-forward.
 
 ## Practice one incident
 
