@@ -60,6 +60,8 @@ make smoke
 
 The bootstrap operation creates `kind-incident-lab`, builds `devops-incident-lab:local`, loads it into the kind nodes, deploys two replicas, and waits for rollout. The smoke test checks the Service DNS/ClusterIP path from inside the cluster, then validates readiness, order creation, and metrics through a temporary local port-forward.
 
+The local deploy script restarts an existing Deployment after loading a rebuilt `:local` image because an unchanged pod template does not trigger a rollout. This is a kind-lab convenience only. Production delivery should publish an immutable version tag or digest and update the declarative workload reference so the exact artifact is attributable and rollbackable.
+
 ## Practice one incident
 
 ```bash
