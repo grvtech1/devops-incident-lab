@@ -149,6 +149,8 @@ Published example: [Incident 02 - Stalled rollout from a bad readiness probe](ev
 
 Published example: [Incident 03 - Service outage from selector drift](evidence/examples/incident-03-service-selector-outage.md).
 
+Published example: [Incident 04 - OOMKilled from an unsafe memory allocation](evidence/examples/incident-04-oomkilled-memory-limit.md).
+
 ## Production boundary
 
 This is an original portfolio lab, not a copy of BillFree and not evidence of historical company tenure. After you personally run the scenarios, you can accurately claim that you built and operated this lab. Company-production claims require separate company evidence and authorization.
