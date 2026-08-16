@@ -4,6 +4,9 @@ set -Eeuo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CHART_VERSION="${KUBE_PROMETHEUS_STACK_VERSION:-87.21.0}"
 HELM_TIMEOUT="${OBSERVABILITY_HELM_TIMEOUT:-20m}"
+source "$ROOT_DIR/scripts/lib.sh"
+
+assert_lab_cluster
 
 command -v helm >/dev/null 2>&1 || { echo 'helm is required.' >&2; exit 1; }
 GRAFANA_ADMIN_PASSWORD="${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD without committing it.}"

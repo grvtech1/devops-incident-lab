@@ -121,6 +121,8 @@ bash scripts/install-argocd.sh
 
 The Argo CD Application has pruning and self-healing enabled. Do not point the lab Application at an unrelated cluster.
 
+The installer refuses any context except `kind-incident-lab`, waits up to 15 minutes for first-time image pulls, and exits only after the Application reaches `Synced` and `Healthy`. Set `ARGOCD_WAIT_TIMEOUT` when the control-plane wait needs a different limit.
+
 ## Seven-day confidence path
 
 1. Deploy and explain every Kubernetes object without incidents.
