@@ -147,6 +147,8 @@ Published example: [Incident 01 - CrashLoop from invalid runtime configuration](
 
 Published example: [Incident 02 - Stalled rollout from a bad readiness probe](evidence/examples/incident-02-stalled-rollout-readiness.md).
 
+Published example: [Incident 03 - Service outage from selector drift](evidence/examples/incident-03-service-selector-outage.md).
+
 ## Production boundary
 
 This is an original portfolio lab, not a copy of BillFree and not evidence of historical company tenure. After you personally run the scenarios, you can accurately claim that you built and operated this lab. Company-production claims require separate company evidence and authorization.
