@@ -114,9 +114,20 @@ function createApplication(config) {
     const requestId = req.headers['x-request-id'] || randomUUID();
     const url = new URL(req.url, 'http://localhost');
     const route = url.pathname;
+    const requestStartedAt = process.hrtime.bigint();
 
     res.setHeader('x-request-id', requestId);
     log('info', 'request_started', { requestId, method: req.method, route });
+    res.once('finish', () => {
+      const durationMs = Number(process.hrtime.bigint() - requestStartedAt) / 1e6;
+      log('info', 'request_completed', {
+        requestId,
+        method: req.method,
+        route,
+        statusCode: res.statusCode,
+        durationMs: Number(durationMs.toFixed(2))
+      });
+    });
 
     if (route === '/health/live') {
       return sendJson(res, shuttingDown ? 503 : 200, { status: shuttingDown ? 'stopping' : 'alive' }, req.method, route);

@@ -17,8 +17,8 @@ data:
           "fieldConfig": {"defaults": {"unit": "reqps"}},
           "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
           "id": 1,
-          "targets": [{"expr": "sum(rate(incident_lab_http_requests_total[1m]))", "legendFormat": "requests"}],
-          "title": "Request rate",
+          "targets": [{"expr": "sum(rate(incident_lab_http_requests_total{method=\"POST\",route=\"/api/orders\"}[1m]))", "legendFormat": "orders"}],
+          "title": "Order request rate",
           "type": "timeseries"
         },
         {
@@ -27,10 +27,10 @@ data:
           "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
           "id": 2,
           "targets": [{
-            "expr": "sum(rate(incident_lab_http_requests_total{status=~\"5..\"}[1m])) / clamp_min(sum(rate(incident_lab_http_requests_total[1m])), 0.001)",
+            "expr": "sum(rate(incident_lab_http_requests_total{method=\"POST\",route=\"/api/orders\",status=~\"5..\"}[1m])) / clamp_min(sum(rate(incident_lab_http_requests_total{method=\"POST\",route=\"/api/orders\"}[1m])), 0.001)",
             "legendFormat": "5xx ratio"
           }],
-          "title": "HTTP 5xx ratio",
+          "title": "Order HTTP 5xx ratio",
           "type": "timeseries"
         },
         {

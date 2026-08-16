@@ -19,6 +19,15 @@ kubectl --namespace "$NAMESPACE" get events --sort-by=.metadata.creationTimestam
   >"$output_dir/events.txt" 2>&1
 kubectl --namespace "$NAMESPACE" logs -l app.kubernetes.io/name=incident-api \
   --all-containers --prefix --tail=200 >"$output_dir/application.log" 2>&1 || true
+
+if kubectl --namespace monitoring get service monitoring-kube-prometheus-prometheus \
+  >/dev/null 2>&1; then
+  kubectl --namespace monitoring get pods -o wide \
+    >"$output_dir/monitoring-workloads.txt" 2>&1
+  kubectl --namespace "$NAMESPACE" get servicemonitor,prometheusrule -o yaml \
+    >"$output_dir/monitoring-config.yaml" 2>&1
+fi
+
 cp "$ROOT_DIR/evidence/TEMPLATE.md" "$output_dir/incident-report.md"
 
 printf 'Evidence captured in %s\n' "$output_dir"

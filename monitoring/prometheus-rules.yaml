@@ -11,9 +11,13 @@ spec:
       rules:
         - alert: IncidentLabHighErrorRate
           expr: |
-            sum(rate(incident_lab_http_requests_total{status=~"5.."}[1m]))
+            sum(rate(incident_lab_http_requests_total{
+              method="POST",route="/api/orders",status=~"5.."
+            }[1m]))
             /
-            clamp_min(sum(rate(incident_lab_http_requests_total[1m])), 0.001)
+            clamp_min(sum(rate(incident_lab_http_requests_total{
+              method="POST",route="/api/orders"
+            }[1m])), 0.001)
             > 0.20
           for: 1m
           labels:
@@ -21,7 +25,7 @@ spec:
             service: incident-api
           annotations:
             summary: Incident Lab order API has a high HTTP error rate
-            description: More than 20% of observed requests returned HTTP 5xx for one minute.
+            description: More than 20% of order creation requests returned HTTP 5xx for one minute.
             runbook_url: docs/RUNBOOK-HIGH-ERROR-RATE.md
         - alert: IncidentLabMetricsMissing
           expr: absent(incident_lab_uptime_seconds{service="incident-api"})
