@@ -15,7 +15,8 @@ kubectl --namespace "$NAMESPACE" get all -o wide >"$output_dir/workloads.txt"
 kubectl --namespace "$NAMESPACE" get deployment incident-api -o yaml >"$output_dir/deployment.yaml"
 kubectl --namespace "$NAMESPACE" get service incident-api -o yaml >"$output_dir/service.yaml"
 kubectl --namespace "$NAMESPACE" get endpointslice -l kubernetes.io/service-name=incident-api -o yaml >"$output_dir/endpointslices.yaml"
-kubectl --namespace "$NAMESPACE" get events --sort-by=.metadata.creationTimestamp >"$output_dir/events.txt"
+kubectl --namespace "$NAMESPACE" get events --sort-by=.metadata.creationTimestamp \
+  >"$output_dir/events.txt" 2>&1
 kubectl --namespace "$NAMESPACE" logs -l app.kubernetes.io/name=incident-api \
   --all-containers --prefix --tail=200 >"$output_dir/application.log" 2>&1 || true
 cp "$ROOT_DIR/evidence/TEMPLATE.md" "$output_dir/incident-report.md"
