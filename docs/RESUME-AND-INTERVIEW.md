@@ -8,9 +8,9 @@ After deploying the lab, completing the incidents and retaining evidence, you ma
 
 > Diagnosed CrashLoopBackOff, stalled rollouts, Service selector drift, OOMKilled containers, business-level HTTP failures, GitOps drift and worker-node loss using Kubernetes events, logs, metrics, EndpointSlices and rollout history.
 
-> Implemented CI validation, image scanning, SBOM generation, immutable GHCR publishing and pull-request-based GitOps promotion with Argo CD self-healing.
+> Implemented CI validation, scan-gated immutable GHCR publishing, CycloneDX SBOM generation, pull-request-based image promotion, and Argo CD automated reconciliation and self-healing in a Kubernetes lab.
 
-Use the third statement only after a successful public workflow run has published the image and opened the promotion pull request. A workflow file alone proves design intent, not execution.
+The third statement is supported by the public [delivery record](../evidence/examples/ci-gitops-delivery.md) and [GitOps incident evidence](../evidence/examples/incident-06-gitops-drift.md). A workflow file alone proves design intent, not execution.
 
 ## Do not claim
 

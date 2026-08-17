@@ -169,6 +169,8 @@ Published example: [Incident 06 - GitOps drift and Argo CD self-heal](evidence/e
 
 Published example: [Incident 07 - Worker-node failure and PDB-aware recovery](evidence/examples/incident-07-worker-node-failure.md).
 
+Published delivery proof: [CI, immutable image, SBOM and GitOps promotion](evidence/examples/ci-gitops-delivery.md).
+
 ## Production boundary
 
 This is an original portfolio lab, not a copy of BillFree and not evidence of historical company tenure. After you personally run the scenarios, you can accurately claim that you built and operated this lab. Company-production claims require separate company evidence and authorization.
