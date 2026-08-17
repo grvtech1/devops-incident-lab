@@ -8,7 +8,9 @@ After deploying the lab, completing the incidents and retaining evidence, you ma
 
 > Diagnosed CrashLoopBackOff, stalled rollouts, Service selector drift, OOMKilled containers, business-level HTTP failures, GitOps drift and worker-node loss using Kubernetes events, logs, metrics, EndpointSlices and rollout history.
 
-> Implemented CI image scanning, SBOM generation, immutable GHCR publishing and pull-request-based GitOps promotion with Argo CD self-healing.
+> Implemented CI validation, image scanning, SBOM generation, immutable GHCR publishing and pull-request-based GitOps promotion with Argo CD self-healing.
+
+Use the third statement only after a successful public workflow run has published the image and opened the promotion pull request. A workflow file alone proves design intent, not execution.
 
 ## Do not claim
 
@@ -24,4 +26,10 @@ Impact -> evidence -> competing hypotheses -> root cause
        -> reversible mitigation -> validation -> prevention
 ```
 
-The useful sentence is not “I used kubectl.” The useful sentence is “Healthy pods and an empty EndpointSlice localized the failure to Service label selection, so I corrected the selector without restarting application capacity.”
+The useful sentence is not "I used kubectl." The useful sentence is "Healthy pods and an empty EndpointSlice localized the failure to Service label selection, so I corrected the selector without restarting application capacity."
+
+## Honest positioning for a 2-3 year role
+
+Your strongest positioning is "experienced production support leader transitioning into DevOps with hands-on platform evidence," not "three years of DevOps employment." Connect real support work to incident ownership, stakeholder communication, escalation, change control, Linux/AWS troubleshooting, and post-incident follow-up. Keep this lab under Projects, and keep employer bullets limited to work you actually performed and can verify.
+
+Evidence can establish depth, but elapsed tenure is a separate fact. In an interview, state the distinction before the interviewer has to discover it.

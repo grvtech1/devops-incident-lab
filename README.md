@@ -33,7 +33,7 @@ GitHub push
               |
      Prometheus -> Grafana
               |
-         Alertmanager
+         Alertmanager -> internal webhook receiver
 ```
 
 ## Prerequisites
@@ -107,6 +107,14 @@ kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-alertmanager 9
 
 The chart version is pinned in the installer. Upgrade it deliberately after reading upstream notes and validating the rendered manifests. The installer waits up to 20 minutes for first-time image pulls; set `OBSERVABILITY_HELM_TIMEOUT` to override that limit when needed.
 
+Alertmanager routes only alerts named `IncidentLab*` to the application lab's internal `/api/alerts` webhook. Verify the complete notification path with:
+
+```bash
+make verify-alerts
+```
+
+The verifier submits a uniquely identified synthetic alert to Alertmanager and waits for the matching structured receipt log across the API pods. This proves routing and delivery inside the lab; it is not a substitute for a production destination such as PagerDuty, Slack, Teams, or an authenticated external webhook.
+
 The workflow examples use versioned action releases for readability. Before reusing them with valuable organization secrets, pin every action to a reviewed full commit SHA and automate controlled updates.
 
 ## Enable GitOps
@@ -154,6 +162,12 @@ Published example: [Incident 02 - Stalled rollout from a bad readiness probe](ev
 Published example: [Incident 03 - Service outage from selector drift](evidence/examples/incident-03-service-selector-outage.md).
 
 Published example: [Incident 04 - OOMKilled from an unsafe memory allocation](evidence/examples/incident-04-oomkilled-memory-limit.md).
+
+Published example: [Incident 05 - High business error rate with healthy pods](evidence/examples/incident-05-high-error-rate.md).
+
+Published example: [Incident 06 - GitOps drift and Argo CD self-heal](evidence/examples/incident-06-gitops-drift.md).
+
+Published example: [Incident 07 - Worker-node failure and PDB-aware recovery](evidence/examples/incident-07-worker-node-failure.md).
 
 ## Production boundary
 

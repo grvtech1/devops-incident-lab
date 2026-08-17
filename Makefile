@@ -1,7 +1,10 @@
-.PHONY: test preflight bootstrap deploy smoke incidents status evidence clean
+.PHONY: test validate preflight bootstrap deploy smoke verify-alerts incidents status evidence clean
 
 test:
 	npm test
+
+validate:
+	bash scripts/validate-config.sh
 
 preflight:
 	bash scripts/preflight.sh
@@ -14,6 +17,9 @@ deploy:
 
 smoke:
 	bash scripts/smoke-test.sh
+
+verify-alerts:
+	bash scripts/verify-alert-delivery.sh
 
 incidents:
 	bash scripts/lab.sh list

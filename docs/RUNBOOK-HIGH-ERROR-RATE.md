@@ -23,3 +23,11 @@ bash scripts/smoke-test.sh
 ```
 
 The load test intentionally returns nonzero when it observes failures.
+
+Confirm that Alertmanager also delivered the notification:
+
+```bash
+bash scripts/verify-alert-delivery.sh
+```
+
+The synthetic delivery test complements the real Prometheus rule: Incident 05 proves metric-to-rule firing, while this command isolates and verifies the Alertmanager route and webhook transport.

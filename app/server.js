@@ -46,13 +46,51 @@ function log(level, message, fields = {}) {
   })}\n`);
 }
 
+function readJsonBody(req, maxBytes = 64 * 1024) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    let bytes = 0;
+    let tooLarge = false;
+
+    req.on('data', (chunk) => {
+      if (tooLarge) return;
+      bytes += chunk.length;
+      if (bytes > maxBytes) {
+        tooLarge = true;
+        chunks.length = 0;
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on('end', () => {
+      if (tooLarge) {
+        const error = new Error('request body exceeds 64 KiB');
+        error.statusCode = 413;
+        reject(error);
+        return;
+      }
+      try {
+        resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')));
+      } catch {
+        const error = new Error('request body must be valid JSON');
+        error.statusCode = 400;
+        reject(error);
+      }
+    });
+    req.on('error', reject);
+  });
+}
+
 function createApplication(config) {
   const startedAt = Date.now();
   const counters = {
     requests: new Map(),
     errors: 0,
-    orders: 0
+    orders: 0,
+    alertBatches: 0,
+    alertsByStatus: new Map()
   };
+  let lastAlertBatch = null;
   let ready = false;
   let shuttingDown = false;
 
@@ -101,6 +139,14 @@ function createApplication(config) {
     lines.push('# HELP incident_lab_orders_total Orders accepted by the sample API.');
     lines.push('# TYPE incident_lab_orders_total counter');
     lines.push(`incident_lab_orders_total{service="${config.serviceName}"} ${counters.orders}`);
+    lines.push('# HELP incident_lab_alert_notifications_total Alertmanager notifications received by alert status.');
+    lines.push('# TYPE incident_lab_alert_notifications_total counter');
+    for (const [status, value] of counters.alertsByStatus.entries()) {
+      lines.push(`incident_lab_alert_notifications_total{service="${config.serviceName}",status="${status}"} ${value}`);
+    }
+    lines.push('# HELP incident_lab_alert_notification_batches_total Alertmanager webhook batches received.');
+    lines.push('# TYPE incident_lab_alert_notification_batches_total counter');
+    lines.push(`incident_lab_alert_notification_batches_total{service="${config.serviceName}"} ${counters.alertBatches}`);
     lines.push('# HELP process_resident_memory_bytes Resident memory reported by Node.js.');
     lines.push('# TYPE process_resident_memory_bytes gauge');
     lines.push(`process_resident_memory_bytes ${process.memoryUsage().rss}`);
@@ -152,6 +198,53 @@ function createApplication(config) {
         requestId
       }, req.method, route);
     }
+    if (route === '/api/alerts' && req.method === 'POST') {
+      readJsonBody(req)
+        .then((payload) => {
+          if (!payload || !Array.isArray(payload.alerts)) {
+            return sendJson(res, 400, { error: 'alerts_array_required' }, req.method, route);
+          }
+
+          const alerts = payload.alerts.slice(0, 100).map((alert) => {
+            const status = ['firing', 'resolved'].includes(alert.status) ? alert.status : 'unknown';
+            counters.alertsByStatus.set(status, (counters.alertsByStatus.get(status) || 0) + 1);
+            return {
+              alertname: String(alert.labels?.alertname || 'unknown').slice(0, 120),
+              instance: String(alert.labels?.instance || '').slice(0, 120),
+              service: String(alert.labels?.service || '').slice(0, 120),
+              severity: String(alert.labels?.severity || '').slice(0, 40),
+              status
+            };
+          });
+
+          counters.alertBatches += 1;
+          lastAlertBatch = {
+            receivedAt: new Date().toISOString(),
+            receiver: String(payload.receiver || '').slice(0, 120),
+            status: String(payload.status || '').slice(0, 40),
+            alerts
+          };
+          log('warn', 'alertmanager_notification_received', {
+            receiver: lastAlertBatch.receiver,
+            status: lastAlertBatch.status,
+            alertCount: alerts.length,
+            alerts
+          });
+          return sendJson(res, 202, { accepted: alerts.length }, req.method, route);
+        })
+        .catch((error) => {
+          if (res.headersSent || res.destroyed) return;
+          sendJson(res, error.statusCode || 400, { error: error.message }, req.method, route);
+        });
+      return;
+    }
+    if (route === '/api/alerts' && req.method === 'GET') {
+      return sendJson(res, 200, {
+        batches: counters.alertBatches,
+        alertsByStatus: Object.fromEntries(counters.alertsByStatus),
+        lastAlertBatch
+      }, req.method, route);
+    }
     if (route === '/api/config') {
       return sendJson(res, 200, {
         service: config.serviceName,
@@ -181,7 +274,7 @@ function createApplication(config) {
       return sendJson(res, 200, {
         service: config.serviceName,
         message: 'DevOps Incident Lab is running',
-        endpoints: ['/health/live', '/health/ready', '/api/orders', '/metrics']
+        endpoints: ['/health/live', '/health/ready', '/api/orders', '/api/alerts', '/metrics']
       }, req.method, route);
     }
     return sendJson(res, 404, { error: 'not_found', requestId }, req.method, route);

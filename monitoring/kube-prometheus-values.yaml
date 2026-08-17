@@ -24,5 +24,24 @@ grafana:
 
 alertmanager:
   enabled: true
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: [alertname, service]
+      group_wait: 5s
+      group_interval: 30s
+      repeat_interval: 4h
+      receiver: "null"
+      routes:
+        - receiver: incident-lab-webhook
+          matchers:
+            - 'alertname=~"IncidentLab.*"'
+    receivers:
+      - name: "null"
+      - name: incident-lab-webhook
+        webhook_configs:
+          - url: http://incident-api.incident-lab.svc.cluster.local:8080/api/alerts
+            send_resolved: true
   alertmanagerSpec:
     retention: 24h

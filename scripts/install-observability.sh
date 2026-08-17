@@ -30,4 +30,7 @@ Observability installed.
 Grafana:    kubectl -n monitoring port-forward svc/monitoring-grafana 3000:80
 Prometheus: kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090
 Alerts:     kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-alertmanager 9093:9093
+
+Verify Alertmanager routing after deploying the latest application image:
+  bash scripts/verify-alert-delivery.sh
 EOF
