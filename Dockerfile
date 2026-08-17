@@ -2,8 +2,19 @@ FROM node:24.17.0-alpine3.24
 
 WORKDIR /app
 
+# This service has no runtime packages; omit package-manager dependency trees.
+RUN rm -rf \
+      /usr/local/lib/node_modules/npm \
+      /usr/local/lib/node_modules/corepack \
+      /opt/yarn-* \
+    && rm -f \
+      /usr/local/bin/npm \
+      /usr/local/bin/npx \
+      /usr/local/bin/corepack \
+      /usr/local/bin/yarn \
+      /usr/local/bin/yarnpkg
+
 COPY --chown=10001:10001 app ./app
-COPY --chown=10001:10001 package.json ./package.json
 
 ENV NODE_ENV=production \
     PORT=8080

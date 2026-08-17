@@ -15,7 +15,7 @@ output "control_plane_private_ip" {
 
 output "ansible_inventory" {
   description = "Inventory skeleton; save it as infra/ansible/inventory.ini."
-  value = <<-EOT
+  value       = <<-EOT
     [control_plane]
     control ansible_host=${aws_instance.node[0].public_ip} private_ip=${aws_instance.node[0].private_ip}
 

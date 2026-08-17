@@ -62,6 +62,17 @@ jobs:
       - name: Build candidate image
         run: docker build --tag incident-lab:${{ github.sha }} .
 
+      - name: Verify minimal non-root runtime
+        run: |
+          docker run --rm --entrypoint sh incident-lab:${{ github.sha }} -ec '
+            node --version
+            test "$(id -u)" = "10001"
+            ! command -v npm
+            ! command -v npx
+            ! command -v corepack
+            ! command -v yarn
+          '
+
       - name: Scan filesystem and Kubernetes configuration
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
