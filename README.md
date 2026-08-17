@@ -169,7 +169,7 @@ Published example: [Incident 06 - GitOps drift and Argo CD self-heal](evidence/e
 
 Published example: [Incident 07 - Worker-node failure and PDB-aware recovery](evidence/examples/incident-07-worker-node-failure.md).
 
-Published delivery proof: [CI, immutable image, SBOM and GitOps promotion](evidence/examples/ci-gitops-delivery.md).
+Published delivery proof: [CI, digest-pinned image, SBOM and GitOps promotion](evidence/examples/ci-gitops-delivery.md).
 
 ## Production boundary
 
