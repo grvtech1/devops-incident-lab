@@ -58,7 +58,7 @@ make smoke
 ./scripts/lab.sh list
 ```
 
-The bootstrap operation creates `kind-incident-lab`, builds `devops-incident-lab:local`, loads it into the kind nodes, deploys two replicas, and waits for rollout. The smoke test checks the Service DNS/ClusterIP path from inside the cluster, then validates readiness, order creation, and metrics through a temporary local port-forward. Application replicas use a hard topology-spread constraint across eligible worker hostnames so the node-failure exercise starts with one replica per worker. The constraint explicitly honors node taints, excluding the unschedulable control-plane hostname from skew calculations.
+The bootstrap operation creates `kind-incident-lab`, builds `devops-incident-lab:local`, loads it into the kind nodes, deploys two replicas, and waits for rollout. The smoke test executes its Service DNS/ClusterIP check from a Ready EndpointSlice backend, then validates readiness, order creation, and metrics through a temporary local port-forward. Application replicas use a hard topology-spread constraint across eligible worker hostnames so the node-failure exercise starts with one replica per worker. The constraint explicitly honors node taints, excluding the unschedulable control-plane hostname from skew calculations.
 
 The local deploy script restarts an existing Deployment after loading a rebuilt `:local` image because an unchanged pod template does not trigger a rollout. This is a kind-lab convenience only. Production delivery should publish an immutable version tag or digest and update the declarative workload reference so the exact artifact is attributable and rollbackable.
 

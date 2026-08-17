@@ -6,13 +6,13 @@ LOCAL_PORT="${LOCAL_PORT:-18080}"
 LOG_FILE="${TMPDIR:-/tmp}/incident-lab-port-forward.log"
 SERVICE_URL="http://incident-api:8080"
 
-service_test_pod="$(kubectl --namespace "$NAMESPACE" get pods \
-  -l app.kubernetes.io/name=incident-api \
-  -o jsonpath='{range .items[?(@.status.containerStatuses[0].ready==true)]}{.metadata.name}{"\n"}{end}' \
+service_test_pod="$(kubectl --namespace "$NAMESPACE" get endpointslice \
+  -l kubernetes.io/service-name=incident-api \
+  -o jsonpath='{range .items[*].endpoints[?(@.conditions.ready==true)]}{.targetRef.name}{"\n"}{end}' \
   | head -n 1)"
 
 if [[ -z "$service_test_pod" ]]; then
-  echo 'No Ready incident-api pod is available for the in-cluster Service check.' >&2
+  echo 'No Ready incident-api Service endpoint is available for the in-cluster check.' >&2
   exit 1
 fi
 
