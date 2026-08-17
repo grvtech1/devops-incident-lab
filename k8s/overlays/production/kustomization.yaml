@@ -22,5 +22,5 @@ patches:
         value: "false"
 images:
   - name: incident-lab-image
-    newName: ghcr.io/REPLACE_OWNER/devops-incident-lab
-    digest: sha256:REPLACE_DIGEST
+    newName: ghcr.io/grvtech1/devops-incident-lab
+    digest: sha256:fb7eb08eafbe05ea31f428deb73aaf9aa71653f12833cf0c80bef5f00e709a58
