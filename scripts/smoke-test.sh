@@ -17,8 +17,12 @@ if [[ -z "$service_test_pod" ]]; then
 fi
 
 echo 'In-cluster Service DNS/ClusterIP check:'
-kubectl --namespace "$NAMESPACE" exec "$service_test_pod" -- \
-  wget -q -T 3 -t 1 -O - "$SERVICE_URL/health/ready"
+if ! timeout 10s kubectl --request-timeout=5s --namespace "$NAMESPACE" \
+  exec "$service_test_pod" -- \
+  wget -q -T 3 -t 1 -O - "$SERVICE_URL/health/ready"; then
+  echo 'In-cluster Service check timed out or failed.' >&2
+  exit 1
+fi
 echo
 
 kubectl --namespace "$NAMESPACE" port-forward service/incident-api "$LOCAL_PORT:8080" >"$LOG_FILE" 2>&1 &

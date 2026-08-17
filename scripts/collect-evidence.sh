@@ -17,7 +17,8 @@ kubectl --namespace "$NAMESPACE" get service incident-api -o yaml >"$output_dir/
 kubectl --namespace "$NAMESPACE" get endpointslice -l kubernetes.io/service-name=incident-api -o yaml >"$output_dir/endpointslices.yaml"
 kubectl --namespace "$NAMESPACE" get events --sort-by=.metadata.creationTimestamp \
   >"$output_dir/events.txt" 2>&1
-kubectl --namespace "$NAMESPACE" logs -l app.kubernetes.io/name=incident-api \
+timeout 20s kubectl --request-timeout=10s --namespace "$NAMESPACE" \
+  logs -l app.kubernetes.io/name=incident-api \
   --all-containers --prefix --tail=200 >"$output_dir/application.log" 2>&1 || true
 
 if kubectl --namespace monitoring get service monitoring-kube-prometheus-prometheus \
@@ -33,7 +34,8 @@ if kubectl --namespace argocd get application incident-lab >/dev/null 2>&1; then
     >"$output_dir/argocd-workloads.txt" 2>&1
   kubectl --namespace argocd get application incident-lab -o yaml \
     >"$output_dir/argocd-application.yaml" 2>&1
-  kubectl --namespace argocd logs statefulset/argocd-application-controller \
+  timeout 20s kubectl --request-timeout=10s --namespace argocd \
+    logs statefulset/argocd-application-controller \
     --since=10m >"$output_dir/argocd-controller.log" 2>&1 || true
 fi
 

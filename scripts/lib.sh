@@ -13,7 +13,13 @@ assert_lab_cluster() {
     printf 'Switch to the lab cluster or explicitly set EXPECTED_CONTEXT.\n' >&2
     exit 1
   fi
-  kubectl get namespace "$NAMESPACE" >/dev/null 2>&1 || {
+
+  if ! kubectl --request-timeout=5s get --raw='/readyz' >/dev/null 2>&1; then
+    echo 'Kubernetes API is unreachable or not Ready; refusing to continue.' >&2
+    exit 1
+  fi
+
+  kubectl --request-timeout=5s get namespace "$NAMESPACE" >/dev/null 2>&1 || {
     printf 'Namespace %q does not exist. Run make bootstrap first.\n' "$NAMESPACE" >&2
     exit 1
   }
